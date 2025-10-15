@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>V7 Right Livelihood Calculator (RLI)</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f4f7;
+            color: #333;
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        h1, h2 {
+            color: #00796b; /* Compassion Teal */
+            text-align: center;
+        }
+        .input-group {
+            margin-bottom: 15px;
+            padding: 10px;
+            border: 1px dashed #bdbdbd;
+            border-radius: 5px;
+            background-color: #fff;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input[type="number"], input[type="range"], select {
+            width: 95%;
+            padding: 8px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            background-color: #4caf50; /* Right Effort Green */
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 1.1em;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #43a047;
+        }
+        #result-box {
+            margin-top: 30px;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        #RLI-value {
+            font-size: 2.5em;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        .feedback {
+            font-size: 1.2em;
+            margin-top: 15px;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>V7 Right Livelihood Calculator (RLI)</h1>
+    <h2>The Digital Middle Path (\(\mathbf{I}_{\text{Harmless}} \ge \mathbf{E}\))</h2>
+
+    <div class="input-group">
+        <h3>1. Poormanmeism Constraint (\(\mathbf{E}\))</h3>
+        <p>Your Estimated Absolute Minimum Monthly Financial Need. The threshold below which dignity is compromised. Set to 10,000 THB.</p>
+        <label for="e-value">Minimal Need (E) in THB:</label>
+        <input type="number" id="e-value" value="10000" min="100" required>
+    </div>
+
+    <div class="input-group">
+        <h3>2. Harmless Income (\(\mathbf{H}_{\text{Final}}\))</h3>
+        <p>Income earned without exploitation. $\mathbf{H}_{\text{Final}} = \mathbf{H}_{\text{Value}} \times \mathbf{S}_{h}$</p>
+
+        <label for="h-value">Total Monthly Income Value (THB):</label>
+        <input type="number" id="h-value" value="0" min="0" required>
+
+        <label for="h-score">Harmlessness Score (\(\mathbf{S}_{h}\)):</label>
+        <input type="range" id="h-score" min="0" max="1" step="0.05" value="1.0" oninput="document.getElementById('score-display').innerText=this.value">
+        <p>Current Score: <span id="score-display">1.0</span> (1.0 = Pure Virtue, 0.0 = High Harm)</p>
+    </div>
+
+    <div class="input-group">
+        <h3>3. Moral Debt (\(\mathbf{D}\))</h3>
+        <p>Estimated Monthly Cost of Non-Virtuous Activity (Stress, digital pollution, manipulation cost, etc.).</p>
+        <label for="d-value">Estimated Moral/Digital Debt (D) in THB:</label>
+        <input type="number" id="d-value" value="0" min="0" required>
+    </div>
+
+    <button onclick="calculateRLI()">Calculate Right Livelihood Index (RLI)</button>
+
+    <div id="result-box">
+        <h2>Right Livelihood Index (RLI)</h2>
+        <div id="RLI-value">0 THB</div>
+        <div class="feedback" id="feedback-text">Enter values and calculate.</div>
+    </div>
+
+    <script>
+        function calculateRLI() {
+            // Retrieve values and ensure they are numbers
+            const E = parseFloat(document.getElementById('e-value').value) || 0;
+            const H_value = parseFloat(document.getElementById('h-value').value) || 0;
+            const H_score = parseFloat(document.getElementById('h-score').value) || 0;
+            const D = parseFloat(document.getElementById('d-value').value) || 0;
+            
+            // Calculate the Harmless Income (H_Final = H_Value * H_Score)
+            const H_Final = H_value * H_score;
+
+            // Calculate the RLI: RLI = H_Final - E - D
+            const RLI = H_Final - E - D;
+
+            // Display RLI Value
+            document.getElementById('RLI-value').innerText = RLI.toFixed(2) + ' THB';
+
+            // Apply the Deterministic Feedback Logic (RLI Duality)
+            let feedback = '';
+            const resultBox = document.getElementById('result-box');
+
+            if (RLI > 500) { // Positive equilibrium zone with buffer
+                feedback = `\(\mathbf{RLI > E}\): You are earning beyond minimal needs. Practice generosity (\(\mathbf{Dāna}\)) and increase your Harmlessness Score (\(\mathbf{S}_{h}\)).`;
+                resultBox.style.backgroundColor = '#e8f5e9'; // Light Green (Harmony)
+                resultBox.style.color = '#388e3c';
+            } else if (RLI >= -500 && RLI <= 500) { // Stable Equilibrium Zone
+                feedback = `\(\mathbf{RLI} \approx \mathbf{0}\): You are in the equilibrium of Poormanmeism. Continue mindfulness (\(\mathbf{Sammā Sati}\)) to maintain this ethical homeostasis.`;
+                resultBox.style.backgroundColor = '#fff8e1'; // Light Yellow (Middle Path)
+                resultBox.style.color = '#fbc02d';
+            } else if (RLI < -500) { // Negative result (Potential Dukkha/Harm)
+                feedback = `\(\mathbf{RLI < 0}\): Warning. You are falling below the Poormanmeism Constraint (\(\mathbf{E}\)). Reduce moral debt (\(\mathbf{D}\)) or find a purer source of income (\(\mathbf{H}\)) through Right Effort.`;
+                resultBox.style.backgroundColor = '#ffebee'; // Light Red (Dukkha)
+                resultBox.style.color = '#d32f2f';
+            } else {
+                feedback = 'Error in computation. Check inputs.';
+                resultBox.style.backgroundColor = '#ccc';
+            }
+
+            document.getElementById('feedback-text').innerText = feedback;
+        }
+    </script>
+
+</body>
+</html>
